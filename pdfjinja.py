@@ -237,7 +237,10 @@ class PdfJinja(object):
                 # Skip the field if it is already rendered by filter
                 if field not in self.rendered:
                     if PY3:
-                        field = field.decode('utf-8')
+                        if field.startswith(b"\xfe"):
+                            field = field.decode("utf-16")
+                        else:
+                            field = field.decode('utf-8')
                     self.rendered[field] = rendered_field
 
         filled = PdfFileReader(self.exec_pdftk(self.rendered))
